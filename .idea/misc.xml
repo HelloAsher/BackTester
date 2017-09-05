@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.6.1 (C:\applications\miniconda\python.exe)" project-jdk-type="Python SDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+  <component name="ScalaSbtSettings">
+    <option name="customLauncherEnabled" value="true" />
+    <option name="customLauncherPath" value="F:\Work\tools\sbt-0.13.13\sbt-launcher-packaging-0.13.13\bin\sbt-launch.jar" />
+    <option name="vmParameters" value="-Dsbt.log.format=true -Dsbt.override.build.repos=true -Dfile.encoding=UTF8 -Dsbt.boot.directory=F:/Work/tools/sbt-0.13.13/sbt/boot -Dsbt.ivy.home=F:/Work/tools/sbt-0.13.13/sbt/ivy2 -Xmx1536M -Xss1M -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512m" />
+  </component>
+</project>
