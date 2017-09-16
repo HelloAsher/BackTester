@@ -192,7 +192,6 @@ class TushareDataHandler(DataHandler):
         self.events.put(MarketEvent)
 
 
-
 ts_data = TushareDataHandler(events=Queue, symbol_list=["600724"], start_datetime="2017-09-11",
                              end_datetime="2017-09-12")
 ts_data.update_bars()
