@@ -169,7 +169,7 @@ class TushareDataHandler(DataHandler):
 
     def _get_new_bar(self, symbol):
         for (index, row) in self.symbol_data[symbol]:
-            yield tuple([symbol, index, row["open"], row["low"],
+            yield tuple([symbol, datetime.datetime.strptime(index, "%Y-%m-%d %H:%M:%S"), row["open"], row["low"],
                         row["high"], row["close"], row["volume"]])
 
     def get_latest_bars(self, symbol, n=1):
