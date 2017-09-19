@@ -3,7 +3,8 @@ import datetime
 from abc import ABCMeta, abstractmethod
 from math import floor
 
-from bt.components.event.event import OrderEvent, FillEvent
+from bt.components.event.event import OrderEvent, FillEvent, SignalEvent
+from bt.components.data_handler.data import DataHandler
 
 
 class Portfolio(metaclass=ABCMeta):
@@ -21,13 +22,13 @@ class Portfolio(metaclass=ABCMeta):
         raise NotImplementedError("Should implement update_signal()")
 
     @abstractmethod
-    def update_fill(self, event):
+    def update_from_fill(self, event):
         """
         根据FillEvent来更新投资组合的头寸和持仓
         :param event:   要接收的是FillEvent
         :return:
         """
-        raise NotImplementedError("Should implement update_fill()")
+        raise NotImplementedError("Should implement update_from_fill()")
 
 
 class NaivePortfolio(Portfolio):
@@ -36,7 +37,7 @@ class NaivePortfolio(Portfolio):
     目的是用来测试一些简单的策略，比如BuyAndHoldStrategy这样的
     """
 
-    def __init__(self, data_handler, events, start_datetime, initial_capital=100000.0):
+    def __init__(self, data_handler: DataHandler, events, start_datetime, initial_capital=100000.0):
         """
         通过DataHandler（bars）和一个event queue来初始化一个NavePortfolio，还有一个开始日期
         :param data_handler:    DataHandler
@@ -109,8 +110,38 @@ class NaivePortfolio(Portfolio):
         self.all_holdings.append(dic_holding_new)
         pass
 
-    def update_fill(self, event):
+    def update_positions_from_fill(self, fill: FillEvent):
+        fill_direction = 0
+        if fill.direction == "BUY":
+            fill_direction = 1
+        if fill.direction == "SELL":
+            fill_direction = -1
+        self.current_positions[fill.symbol] += fill_direction * fill.quantity
+        pass
+
+    def update_holdings_from_fill(self, fill: FillEvent):
+        fill_direction = 0
+        if fill.direction == "BUY":
+            fill_direction = 1
+        if fill_direction == "SELL":
+            fill_direction = -1
+        close_price = self.data_handler.get_latest_bars(fill.symbol)[0][5]
+        cost = fill_direction * fill.quantity * close_price
+        self.current_holdings[fill.symbol] += cost
+        self.current_holdings["commission"] += fill.commission
+        self.current_holdings["cash"] -= (cost + fill.commission)
+        self.current_holdings["total"] -= (cost + fill.commission)
+        pass
+
+    def update_from_fill(self, event: FillEvent):
+        if event.type == "FILL":
+            self.update_positions_from_fill(event)
+            self.update_holdings_from_fill(event)
         pass
 
     def update_signal(self, event):
+        pass
+
+    def generate_naive_order(self, event: SignalEvent):
+
         pass
