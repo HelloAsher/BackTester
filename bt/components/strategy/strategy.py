@@ -48,7 +48,7 @@ class BuyAndHoldStrategy(Strategy):
         """
         if event.type == "MARKET":
             for s in self.symbol_list:
-                bar = self.data_handler.get_latest_bars(s, n=1)
+                bar = self.data_handler.get_latest_bars(s)
                 if bar is not None and bar != []:
                     if self.bought[s] is False:
                         signal = SignalEvent(bar[0][0], bar[0][1], "LONG", 10)

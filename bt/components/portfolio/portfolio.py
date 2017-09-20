@@ -5,7 +5,7 @@ from math import floor
 from queue import Queue
 
 from bt.components.event.event import OrderEvent, FillEvent, SignalEvent
-from bt.components.data_handler.data import DataHandler
+from bt.components.data_handler.data import TushareDataHandler
 
 
 class Portfolio(metaclass=ABCMeta):
@@ -38,7 +38,7 @@ class NaivePortfolio(Portfolio):
     目的是用来测试一些简单的策略，比如BuyAndHoldStrategy这样的
     """
 
-    def __init__(self, data_handler: DataHandler, events, start_datetime, initial_capital=100000.0):
+    def __init__(self, data_handler: TushareDataHandler, events, start_datetime, initial_capital=100000.0):
         """
         通过DataHandler（bars）和一个event queue来初始化一个NavePortfolio，还有一个开始日期
         :param data_handler:    DataHandler
@@ -144,7 +144,7 @@ class NaivePortfolio(Portfolio):
         order_type = "MKT"
         if direction == "LONG" and current_quantity == 0:
             order = OrderEvent(symbol, market_quantity, "BUY", order_type)
-        if direction == "LONG" and current_quantity == 0:
+        if direction == "SHORT" and current_quantity == 0:
             order = OrderEvent(symbol, market_quantity, "SELL", order_type)
 
         if direction == "EXIT" and current_quantity < 0:

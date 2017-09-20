@@ -144,7 +144,7 @@ class HistoricCSVDataHandler(DataHandler):
 class TushareDataHandler(DataHandler):
     def __init__(self, events, symbol_list, start_datetime, end_datetime):
         self.events = events
-        self.symbo_list = symbol_list
+        self.symbol_list = symbol_list
         self.start_datetime = start_datetime
         self.end_datetime = end_datetime
 
@@ -155,7 +155,7 @@ class TushareDataHandler(DataHandler):
 
     def _get_data_from_tushare(self):
         comb_index = None
-        for s in self.symbo_list:
+        for s in self.symbol_list:
             self.symbol_data[s] = ts.get_hist_data(s, start=self.start_datetime,
                                                                  end=self.end_datetime, ktype="5")
             self.symbol_data[s].sort_index(inplace=True)
@@ -164,7 +164,7 @@ class TushareDataHandler(DataHandler):
             else:
                 comb_index = comb_index.union(self.symbol_data[s].index)
             self.latest_symbol_data[s] = []
-        for s in self.symbo_list:
+        for s in self.symbol_list:
             self.symbol_data[s] = self.symbol_data[s].reindex(index=comb_index, method="pad").iterrows()
 
     def _get_new_bar(self, symbol):
@@ -174,14 +174,15 @@ class TushareDataHandler(DataHandler):
 
     def get_latest_bars(self, symbol, n=1):
         try:
-            bar_list = self.symbol_data[symbol]
+            bar_list = self.latest_symbol_data[symbol]
         except KeyError:
             print("get_latest_bars：给定的symbol不存在！")
         else:
+            print(bar_list)
             return bar_list[-n:]
 
     def update_bars(self):
-        for s in self.symbo_list:
+        for s in self.symbol_list:
             try:
                 new_bar = self._get_new_bar(s).__next__()
             except StopIteration:
@@ -189,14 +190,4 @@ class TushareDataHandler(DataHandler):
             else:
                 if new_bar is not None:
                     self.latest_symbol_data[s].append(new_bar)
-        self.events.put(MarketEvent)
-
-
-ts_data = TushareDataHandler(events=Queue, symbol_list=["600724"], start_datetime="2017-09-11",
-                             end_datetime="2017-09-12")
-ts_data.update_bars()
-print(ts_data.latest_symbol_data)
-ts_data.update_bars()
-ts_data.update_bars()
-print(ts_data.latest_symbol_data)
-
+        self.events.put(MarketEvent())
