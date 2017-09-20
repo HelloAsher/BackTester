@@ -25,7 +25,7 @@ class SignalEvent(Event):
         :param symbol:  交易品种的代码
         :param datetime:    生成这个Signal Event的时间
         :param signal_type: 这个参数的可选有"SHORT"和"LONG"和"EXIT"
-        :param strength: 对持仓数量的控制
+        :param strength: 对持仓数量的控制，感觉有点像“手”的意思
         """
         self.type = "SIGNAL"
         self.symbol = symbol

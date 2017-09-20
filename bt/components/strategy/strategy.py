@@ -51,7 +51,7 @@ class BuyAndHoldStrategy(Strategy):
                 bar = self.data_handler.get_latest_bars(s, n=1)
                 if bar is not None and bar != []:
                     if self.bought[s] is False:
-                        signal = SignalEvent(bar[0][0], bar[0][1], "LONG")
+                        signal = SignalEvent(bar[0][0], bar[0][1], "LONG", 10)
                         self.events.put(signal)
                         self.bought[s] = True
         pass
