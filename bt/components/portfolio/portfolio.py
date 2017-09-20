@@ -1,7 +1,8 @@
-import datetime
+import pandas as pd
 
 from abc import ABCMeta, abstractmethod
 from math import floor
+from queue import Queue
 
 from bt.components.event.event import OrderEvent, FillEvent, SignalEvent
 from bt.components.data_handler.data import DataHandler
@@ -13,7 +14,7 @@ class Portfolio(metaclass=ABCMeta):
     """
 
     @abstractmethod
-    def update_signal(self, event):
+    def update_from_signal(self, event):
         """
         作用于SignalEvent，并根据portfolio的逻辑产生新的OrderEvent
         :param event:   要接收的是SignalEvent
@@ -47,7 +48,7 @@ class NaivePortfolio(Portfolio):
         """
         self.data_handler = data_handler
         self.symbol_list = self.data_handler.symbol_list
-        self.events = events
+        self.events: Queue = events
         self.start_datetime = start_datetime
         self.initial_capital = initial_capital
 
@@ -81,8 +82,6 @@ class NaivePortfolio(Portfolio):
     def update_timeindex(self):
         """
 
-        :param event:
-        :return:
         """
         latest_bar_of_every_symbol = {}
         for symbol in self.symbol_list:
@@ -133,15 +132,48 @@ class NaivePortfolio(Portfolio):
         self.current_holdings["total"] -= (cost + fill.commission)
         pass
 
+    def generate_naive_order(self, event: SignalEvent):
+        order = None
+
+        symbol = event.symbol
+        strength = event.strength
+        direction = event.signal_type
+
+        market_quantity = floor(100 * strength)
+        current_quantity = self.current_positions[symbol]
+        order_type = "MKT"
+        if direction == "LONG" and current_quantity == 0:
+            order = OrderEvent(symbol, market_quantity, "BUY", order_type)
+        if direction == "LONG" and current_quantity == 0:
+            order = OrderEvent(symbol, market_quantity, "SELL", order_type)
+
+        if direction == "EXIT" and current_quantity < 0:
+            order = OrderEvent(symbol, market_quantity, "BUY", order_type)
+        if direction == "EXIT" and current_quantity < 0:
+            order = OrderEvent(symbol, market_quantity, "SELL", order_type)
+        return order
+        pass
+
     def update_from_fill(self, event: FillEvent):
         if event.type == "FILL":
             self.update_positions_from_fill(event)
             self.update_holdings_from_fill(event)
         pass
 
-    def update_signal(self, event):
+    def update_from_signal(self, event: SignalEvent):
+        if event.type == "SIGNAL":
+            order = self.generate_naive_order(event)
+            self.events.put(order)
         pass
 
-    def generate_naive_order(self, event: SignalEvent):
+    def create_equity_curve_dataframe(self):
+        """
+        创建可以画出净值曲线的dataframe
+        :return:
+        """
+        curve = pd.DataFrame(self.all_holdings)
+        curve.set_index("datetime", inplace=True)
+        curve["returns"] = curve["total"].pct_change()
+        curve["equity_curve"] = (1.0 + curve["returns"]).cumprod()
+        return curve
 
-        pass

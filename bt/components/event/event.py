@@ -19,17 +19,19 @@ class SignalEvent(Event):
     它是来自strategy的event，将要被portfolio接受，portfolio会在之上做出反应
     """
 
-    def __init__(self, symbol, datetime, signal_type):
+    def __init__(self, symbol, datetime, signal_type, strength):
         """
         初始化SignalEvent
         :param symbol:  交易品种的代码
         :param datetime:    生成这个Signal Event的时间
-        :param signal_type: 这个参数的可选有"SHORT"和"LONG"
+        :param signal_type: 这个参数的可选有"SHORT"和"LONG"和"EXIT"
+        :param strength: 对持仓数量的控制
         """
         self.type = "SIGNAL"
         self.symbol = symbol
         self.datetime = datetime
         self.signal_type = signal_type
+        self.strength = strength
 
 
 class OrderEvent(Event):
