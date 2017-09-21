@@ -21,7 +21,7 @@ while True:
     while True:
         try:
             event = events.get(False)
-        except Queue.Empty:
+        except Queue.empty():
             break
         else:
             if event is not None:
