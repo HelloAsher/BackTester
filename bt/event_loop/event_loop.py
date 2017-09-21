@@ -1,4 +1,9 @@
+from bt.components.event.event import MarketEvent, SignalEvent
+from bt.components.data_handler.data import TushareDataHandler
+from bt.components.strategy.strategy import BuyAndHoldStrategy
+from bt.components.portfolio.portfolio import NaivePortfolio
 
+from queue import Queue
 
 bars = DataHandler(..)
 strategy = Strategy(..)
@@ -7,7 +12,7 @@ broker = ExecutionHandler(..)
 
 while True:
     # Update the bars (specific backtest code, as opposed to live trading)
-    if bars.continue_backtest == True:
+    if bars.continue_backtest:
         bars.update_bars()
     else:
         break
