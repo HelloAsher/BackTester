@@ -1,19 +1,25 @@
-from bt.components.event.event import MarketEvent, SignalEvent
 from bt.components.data_handler.data import TushareDataHandler
 from bt.components.strategy.strategy import BuyAndHoldStrategy
 from bt.components.portfolio.portfolio import NaivePortfolio
+from bt.components.execution_handler.execution import SimulatedExecutionHandler
 
-from queue import Queue
+import queue
+import time
 
-bars = DataHandler(..)
-strategy = Strategy(..)
-port = Portfolio(..)
-broker = ExecutionHandler(..)
+events = queue.Queue()
+symbol_list = ["600724", "600345", "600348"]
+start_datetime = "2017-09-11"
+end_datetime = "2017-09-15"
+data_handler = TushareDataHandler(events, symbol_list, start_datetime, end_datetime)
+strategy = BuyAndHoldStrategy(data_handler, events)
+portfolio = NaivePortfolio(data_handler, events, start_datetime)
+broker = SimulatedExecutionHandler(events)
+
 
 while True:
     # Update the bars (specific backtest code, as opposed to live trading)
-    if bars.continue_backtest:
-        bars.update_bars()
+    if data_handler.continue_backtest:
+        data_handler.update_bars()
     else:
         break
 
@@ -21,22 +27,25 @@ while True:
     while True:
         try:
             event = events.get(False)
-        except Queue.empty():
+        except queue.Empty:
             break
         else:
             if event is not None:
                 if event.type == 'MARKET':
                     strategy.calculate_signals(event)
-                    port.update_timeindex(event)
+                    portfolio.update_timeindex()
 
                 elif event.type == 'SIGNAL':
-                    port.update_signal(event)
+                    portfolio.update_from_signal(event)
 
                 elif event.type == 'ORDER':
+                    event.print_order()
                     broker.execute_order(event)
 
                 elif event.type == 'FILL':
-                    port.update_fill(event)
+                    portfolio.update_from_fill(event)
 
     # 10-Minute heartbeat
-    time.sleep(10*60)
+    print(portfolio.all_holdings)
+    print(portfolio.all_positions)
+    time.sleep(20)

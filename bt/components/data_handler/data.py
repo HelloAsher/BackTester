@@ -178,7 +178,6 @@ class TushareDataHandler(DataHandler):
         except KeyError:
             print("get_latest_bars：给定的symbol不存在！")
         else:
-            print(bar_list)
             return bar_list[-n:]
 
     def update_bars(self):
