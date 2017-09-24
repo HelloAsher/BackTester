@@ -82,7 +82,7 @@ class NaivePortfolio(Portfolio):
 
     def update_timeindex(self):
         """
-
+        将current_positions和current_holdings的内容追加到all_positions和all_holdings中
         """
         latest_bar_of_every_symbol = {}
         for symbol in self.symbol_list:
