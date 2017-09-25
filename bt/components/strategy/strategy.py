@@ -1,5 +1,3 @@
-import datetime
-
 from abc import ABCMeta, abstractmethod
 from bt.components.event.event import SignalEvent
 
