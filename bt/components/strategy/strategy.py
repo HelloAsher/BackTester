@@ -12,10 +12,22 @@ class Strategy(metaclass=ABCMeta):
     4、strategy类接受MarketEvent，然后生成SignalEvent
     """
 
+    def __init__(self, data_handler, events):
+        """
+        用来初始化BuyAndHoldStrategy这个类的
+        :param data_handler:    DataHandler类的实例
+        :param events:  消息队列
+        """
+        self.data_handler = data_handler
+        self.symbol_list = self.data_handler.symbol_list
+        self.events = events
+
+        self.bought = {symbol: False for symbol in self.symbol_list}
+
     @abstractmethod
     def calculate_signals(self, event):
         """
-        提供计算signal的原型
+        提供计算signal的原型，其计算结果就是生成一个个的OrderEvent
         :return:
         """
         raise NotImplementedError("Should implement calculate_signals()")
@@ -33,12 +45,7 @@ class BuyAndHoldStrategy(Strategy):
         :param data_handler:    DataHandler类的实例
         :param events:  消息队列
         """
-        self.data_handler = data_handler
-        self.symbol_list = self.data_handler.symbol_list
-        self.events = events
-
-        self.bought = {symbol: False for symbol in self.symbol_list}
-        pass
+        super(BuyAndHoldStrategy, self).__init__(data_handler, events)
 
     def calculate_signals(self, event):
         """

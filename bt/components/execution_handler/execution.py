@@ -11,6 +11,9 @@ class ExecutionHandler(metaclass=ABCMeta):
     ExecutionHandler是用来处理portfolio和市场数据的相互交互的，填充FillEvent
     """
 
+    def __init__(self, events: Queue):
+        self.events = events
+
     @abstractclassmethod
     def execute_order(self, event: OrderEvent):
         """
@@ -28,8 +31,7 @@ class SimulatedExecutionHandler(ExecutionHandler):
     """
 
     def __init__(self, events: Queue):
-        self.events = events
-        pass
+        super(SimulatedExecutionHandler, self).__init__(events)
 
     def execute_order(self, event: OrderEvent):
         if event.type == "ORDER":
