@@ -95,12 +95,12 @@ class Portfolio(metaclass=ABCMeta):
 
     def update_from_signal(self, event: SignalEvent):
         if event.type == "SIGNAL":
-            order = self.generate_naive_order(event)
+            order = self.generate_order(event)
             self.events.put(order)
         pass
 
     @abstractmethod
-    def generate_naive_order(self, event):
+    def generate_order(self, event: SignalEvent):
         raise NotImplementedError("Should implement generate_naive_order(self, event)")
 
     def update_timeindex(self):
@@ -135,7 +135,7 @@ class Portfolio(metaclass=ABCMeta):
 
     def create_equity_curve_dataframe(self):
         """
-        创建可以画出净值曲线的dataframe
+        根据当前持有资金量创建可以画出净值曲线的dataframe
         :return:
         """
         curve = pd.DataFrame(self.all_holdings)
@@ -179,6 +179,9 @@ class NaivePortfolio(Portfolio):
         """
         super(NaivePortfolio, self).__init__(data_handler, events, start_datetime, initial_capital)
 
+    def generate_order(self, event: SignalEvent):
+        self.generate_naive_order(event)
+
     def generate_naive_order(self, event: SignalEvent):
         order = None
 
@@ -200,4 +203,3 @@ class NaivePortfolio(Portfolio):
             order = OrderEvent(symbol, market_quantity, "SELL", order_type)
         return order
         pass
-
