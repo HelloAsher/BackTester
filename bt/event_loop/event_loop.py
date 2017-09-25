@@ -5,12 +5,6 @@ from bt.components.execution_handler.execution import SimulatedExecutionHandler
 
 import queue
 import time
-import pandas as pd
-import logging
-
-
-pd.set_option('display.max_rows', 500)
-pd.set_option('display.width', 1000)
 
 events = queue.Queue()
 symbol_list = ["600724", "600345", "600348"]
@@ -50,8 +44,8 @@ while True:
                 elif event.type == 'FILL':
                     portfolio.update_from_fill(event)
 
-    logging.warning(portfolio.current_holdings)
-    logging.warning(portfolio.current_positions)
-    # logging.warning(portfolio.create_equity_curve_dataframe())
+    print("current_holdings: ", portfolio.current_holdings)
+    print("current_positions: ", portfolio.current_positions)
+    print(portfolio.create_equity_curve_dataframe(), "\n\n")
 
     time.sleep(5)
