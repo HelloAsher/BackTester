@@ -182,7 +182,7 @@ class NaivePortfolio(Portfolio):
     def generate_order(self, event: SignalEvent) -> OrderEvent:
         return self.generate_naive_order(event)
 
-    def generate_naive_order(self, event: SignalEvent):
+    def generate_naive_order(self, event: SignalEvent) -> OrderEvent:
         order = None
 
         symbol = event.symbol
