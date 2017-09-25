@@ -2,9 +2,14 @@ from bt.components.data_handler.data import TushareDataHandler
 from bt.components.strategy.strategy import BuyAndHoldStrategy
 from bt.components.portfolio.portfolio import NaivePortfolio
 from bt.components.execution_handler.execution import SimulatedExecutionHandler
+from bt.components.logs.logger import logger, logger_df
 
 import queue
 import time
+import pandas as pd
+
+pd.set_option('display.max_rows', 500)
+pd.set_option('display.width', 1000)
 
 events = queue.Queue()
 symbol_list = ["600724", "600345", "600348"]
@@ -14,7 +19,6 @@ data_handler = TushareDataHandler(events, symbol_list, start_datetime, end_datet
 strategy = BuyAndHoldStrategy(data_handler, events)
 portfolio = NaivePortfolio(data_handler, events, start_datetime)
 broker = SimulatedExecutionHandler(events)
-
 
 while True:
     # Update the bars (specific backtest code, as opposed to live trading)
@@ -45,8 +49,9 @@ while True:
                 elif event.type == 'FILL':
                     portfolio.update_from_fill(event)
 
-    # 10-Minute heartbeat
-    print(portfolio.current_holdings)
-    print(portfolio.current_positions)
-    print(portfolio.create_equity_curve_dataframe())
+    logger().info(portfolio.current_holdings)
+    logger().info(portfolio.current_positions)
+    logger_df().info(portfolio.create_equity_curve_dataframe())
+    logger().info(portfolio.current_positions)
+
     time.sleep(5)
