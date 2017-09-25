@@ -157,7 +157,7 @@ class TushareDataHandler(DataHandler):
         comb_index = None
         for s in self.symbol_list:
             self.symbol_data[s] = ts.get_hist_data(s, start=self.start_datetime,
-                                                                 end=self.end_datetime, ktype="5")
+                                                   end=self.end_datetime, ktype="15")
             self.symbol_data[s].sort_index(inplace=True)
             if comb_index is None:
                 comb_index = self.symbol_data[s].index
@@ -169,8 +169,8 @@ class TushareDataHandler(DataHandler):
 
     def _get_new_bar(self, symbol):
         for (index, row) in self.symbol_data[symbol]:
-            yield tuple([symbol, datetime.datetime.strptime(index, "%Y-%m-%d %H:%M:%S"), row["open"], row["low"],
-                        row["high"], row["close"], row["volume"]])
+            yield tuple([symbol, index, row["open"], row["low"],
+                         row["high"], row["close"], row["volume"]])
 
     def get_latest_bars(self, symbol, n=1):
         try:

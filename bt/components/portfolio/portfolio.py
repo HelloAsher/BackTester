@@ -6,6 +6,7 @@ from queue import Queue
 
 from bt.components.event.event import OrderEvent, FillEvent, SignalEvent
 from bt.components.data_handler.data import TushareDataHandler
+from bt.components.performance.performance import create_drawdowns, create_sharp_ratio
 
 
 class Portfolio(metaclass=ABCMeta):
@@ -81,7 +82,7 @@ class NaivePortfolio(Portfolio):
 
     def update_timeindex(self):
         """
-
+        将current_positions和current_holdings的内容追加到all_positions和all_holdings中
         """
         latest_bar_of_every_symbol = {}
         for symbol in self.symbol_list:
@@ -173,7 +174,24 @@ class NaivePortfolio(Portfolio):
         """
         curve = pd.DataFrame(self.all_holdings)
         curve.set_index("datetime", inplace=True)
-        curve["returns"] = curve["total"].pct_change()
-        curve["equity_curve"] = (1.0 + curve["returns"]).cumprod()
+        curve["returns"] = curve["total"].pct_change()  # 计算相邻两个数之间的变化百分比，(next - pre) / pre
+        curve["equity_curve"] = (1.0 + curve["returns"]).cumprod()  # 将这个数组的每个数连乘起来
         return curve
 
+    def output_summary_stats(self):
+        """
+        为portfolio创建一个包含统计信息的list，包括夏普比率和最大回撤等
+        :return: 一个包含了统计信息的list
+        """
+        equity_curve = self.create_equity_curve_dataframe()
+        total_return_and_capital = equity_curve["equity_curve"][-1]
+        returns = equity_curve["returns"]
+        pnl = equity_curve["equity_curve"]
+
+        sharp_ratio = create_sharp_ratio(returns)
+        max_drawdown, duration = create_drawdowns(pnl)
+
+        stats = {"total return": "%0.2f%%" % ((total_return_and_capital - 1) * 100),
+                 "sharp ratio": "%0.2f" % sharp_ratio, "max drawdown": '%0.2f%%' % (max_drawdown * 100.0),
+                 "drawdown duration": "%d" % duration}
+        return stats
