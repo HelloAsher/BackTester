@@ -1,5 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from bt.components.event.event import SignalEvent
+from bt.components.data_handler.data import DataHandler
 
 
 class Strategy(metaclass=ABCMeta):
@@ -10,7 +11,7 @@ class Strategy(metaclass=ABCMeta):
     4、strategy类接受MarketEvent，然后生成SignalEvent
     """
 
-    def __init__(self, data_handler, events):
+    def __init__(self, data_handler: DataHandler, events):
         """
         用来初始化BuyAndHoldStrategy这个类的
         :param data_handler:    DataHandler类的实例
@@ -37,7 +38,7 @@ class BuyAndHoldStrategy(Strategy):
     2、作用是：这个策略所持有的股票可以作为benchmark，用来跟其他策略做比较
     """
 
-    def __init__(self, data_handler, events):
+    def __init__(self, data_handler: DataHandler, events):
         """
         用来初始化BuyAndHoldStrategy这个类的
         :param data_handler:    DataHandler类的实例
