@@ -2,11 +2,12 @@ from bt.components.data_handler.data import TushareDataHandler
 from bt.components.strategy.strategy import BuyAndHoldStrategy
 from bt.components.portfolio.portfolio import NaivePortfolio
 from bt.components.execution_handler.execution import SimulatedExecutionHandler
-from bt.components.logs.logger import logger, logger_df
 
 import queue
 import time
 import pandas as pd
+import logging
+
 
 pd.set_option('display.max_rows', 500)
 pd.set_option('display.width', 1000)
@@ -49,9 +50,8 @@ while True:
                 elif event.type == 'FILL':
                     portfolio.update_from_fill(event)
 
-    logger().info(portfolio.current_holdings)
-    logger().info(portfolio.current_positions)
-    logger_df().info(portfolio.create_equity_curve_dataframe())
-    logger().info(portfolio.current_positions)
+    logging.warning(portfolio.current_holdings)
+    logging.warning(portfolio.current_positions)
+    # logging.warning(portfolio.create_equity_curve_dataframe())
 
     time.sleep(5)
