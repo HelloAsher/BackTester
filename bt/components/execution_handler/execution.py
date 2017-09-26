@@ -3,7 +3,7 @@ from queue import Queue
 
 from abc import ABCMeta, abstractclassmethod
 
-from bt.components.event.event import OrderEvent, FillEvent
+from bt.components.event.event import OrderEvent, FillEvent, EventType
 
 
 class ExecutionHandler(metaclass=ABCMeta):
@@ -34,7 +34,7 @@ class SimulatedExecutionHandler(ExecutionHandler):
         super(SimulatedExecutionHandler, self).__init__(events)
 
     def execute_order(self, event: OrderEvent):
-        if event.type == "ORDER":
+        if event.type == EventType.ORDER:
             fill_event = FillEvent(datetime.datetime.utcnow(), event.symbol, "SH", event.quantity, event.direction,
                                    None)
             self.events.put(fill_event)

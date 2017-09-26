@@ -1,7 +1,22 @@
+from enum import Enum, unique
+
+
+@unique
+class EventType(Enum):
+    MARKET = 0
+    SIGNAL = 1
+    ORDER = 2
+    FILL = 3
+
+
 class Event(object):
     """
     Event类是为其子类提供接口的
     """
+
+    @property
+    def typename(self):
+        return self.type
     pass
 
 
@@ -11,7 +26,7 @@ class MarketEvent(Event):
     """
 
     def __init__(self):
-        self.type = "MARKET"
+        self.type = EventType.MARKET
 
 
 class SignalEvent(Event):
@@ -27,7 +42,7 @@ class SignalEvent(Event):
         :param signal_type: 这个参数的可选有"SHORT"和"LONG"和"EXIT"
         :param strength: 对持仓数量的控制，感觉有点像“手”的意思
         """
-        self.type = "SIGNAL"
+        self.type = EventType.SIGNAL
         self.symbol = symbol
         self.datetime = datetime
         self.signal_type = signal_type
@@ -47,7 +62,7 @@ class OrderEvent(Event):
         :param direction:   交易的方向，可选的有"BUY"和"SELL"
         :param order_type:  订单的类型，可选的有："MKT"，表示Market；"LMT"：表示Limit
         """
-        self.type = "ORDER"
+        self.type = EventType.ORDER
         self.symbol = symbol
         self.quantity = quantity
         self.direction = direction
@@ -62,6 +77,7 @@ class FillEvent(Event):
     """
     一个FillEvent里面包含了这个订单被执行之后的详细信息，包括佣金，交易数量什么的
     """
+
     def __init__(self, time_index, symbol, exchange, quantity, direction, fill_cost, commission=None):
         """
         初始化
@@ -73,7 +89,7 @@ class FillEvent(Event):
         :param fill_cost:   交易后的持仓
         :param commission:  An optional commission sent from IB.
         """
-        self.type = "FILL"
+        self.type = EventType.FILL
         self.time_index = time_index
         self.symbol = symbol
         self.exchange = exchange

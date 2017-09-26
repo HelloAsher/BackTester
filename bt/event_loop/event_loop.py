@@ -2,6 +2,7 @@ from bt.components.data_handler.data import TushareDataHandler
 from bt.components.strategy.strategy import BuyAndHoldStrategy
 from bt.components.portfolio.portfolio import NaivePortfolio
 from bt.components.execution_handler.execution import SimulatedExecutionHandler
+from bt.components.event.event import EventType
 
 import queue
 import time
@@ -30,18 +31,18 @@ while True:
             break
         else:
             if event is not None:
-                if event.type == 'MARKET':
+                if event.type == EventType.MARKET:
                     strategy.calculate_signals(event)
                     portfolio.update_timeindex()
 
-                elif event.type == 'SIGNAL':
+                elif event.type == EventType.SIGNAL:
                     portfolio.update_from_signal(event)
 
-                elif event.type == 'ORDER':
+                elif event.type == EventType.ORDER:
                     event.print_order()
                     broker.execute_order(event)
 
-                elif event.type == 'FILL':
+                elif event.type == EventType.FILL:
                     portfolio.update_from_fill(event)
 
     print("current_holdings: ", portfolio.current_holdings)

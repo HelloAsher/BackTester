@@ -4,7 +4,7 @@ from abc import ABCMeta, abstractmethod
 from math import floor
 from queue import Queue
 
-from bt.components.event.event import OrderEvent, FillEvent, SignalEvent
+from bt.components.event.event import OrderEvent, FillEvent, SignalEvent, EventType
 from bt.components.data_handler.data import DataHandler
 from bt.components.performance.performance import create_drawdowns, create_sharp_ratio
 
@@ -88,13 +88,13 @@ class Portfolio(metaclass=ABCMeta):
         pass
 
     def update_from_fill(self, event: FillEvent):
-        if event.type == "FILL":
+        if event.type == EventType.FILL:
             self.update_positions_from_fill(event)
             self.update_holdings_from_fill(event)
         pass
 
     def update_from_signal(self, event: SignalEvent):
-        if event.type == "SIGNAL":
+        if event.type == EventType.SIGNAL:
             order = self.generate_order(event)
             self.events.put(order)
         pass

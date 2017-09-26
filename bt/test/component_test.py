@@ -1,4 +1,5 @@
 from queue import Queue
+from bt.components.event.event import MarketEvent
 
 nn = Queue()
 nn.put("sdfsadf1")
@@ -22,3 +23,6 @@ print(fff)
 
 ssss = ddd.cumprod()
 print(ssss)
+
+
+print(MarketEvent().type)

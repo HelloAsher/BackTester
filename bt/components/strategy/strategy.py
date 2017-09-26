@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 import queue
 
-from bt.components.event.event import SignalEvent, MarketEvent
+from bt.components.event.event import SignalEvent, MarketEvent, EventType
 from bt.components.data_handler.data import DataHandler
 
 
@@ -54,7 +54,7 @@ class BuyAndHoldStrategy(Strategy):
         :param event:   MarketEvent
         :return:
         """
-        if event.type == "MARKET":
+        if event.type == EventType.MARKET:
             for s in self.symbol_list:
                 bar = self.data_handler.get_latest_bars(s)
                 if bar is not None and bar != []:
