@@ -69,7 +69,7 @@ class OrderEvent(Event):
         self.order_type = order_type
 
     def print_order(self):
-        print("Order: Symbol=%s, Type=%s, Quantity=%s, Direction=%s" % (self.symbol, self.type,
+        print("Order: Symbol=%s, Type=%s, Quantity=%s, Direction=%s" % (self.symbol, self.type_enum,
                                                                         self.quantity, self.direction))
 
 

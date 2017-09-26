@@ -8,7 +8,7 @@ import queue
 import time
 
 events = queue.Queue()
-symbol_list = ["600724", "600345", "600348"]
+symbol_list = ["600345", "600348"]
 start_datetime = "2017-09-05 09:30:00"
 end_datetime = "2017-09-05 15:00:00"
 data_handler = TushareDataHandler(events, symbol_list, start_datetime, end_datetime)
@@ -31,22 +31,25 @@ while True:
             break
         else:
             if event is not None:
-                if event.typename == EventType.MARKET:
+                if event.type_enum == EventType.MARKET:
                     strategy.calculate_signals(event)
                     portfolio.update_timeindex()
 
-                elif event.typename == EventType.SIGNAL:
+                elif event.type_enum == EventType.SIGNAL:
                     portfolio.update_from_signal(event)
 
-                elif event.typename == EventType.ORDER:
+                elif event.type_enum == EventType.ORDER:
                     event.print_order()
                     broker.execute_order(event)
 
-                elif event.typename == EventType.FILL:
+                elif event.type_enum == EventType.FILL:
                     portfolio.update_from_fill(event)
 
     print("current_holdings: ", portfolio.current_holdings)
     print("current_positions: ", portfolio.current_positions)
-    print(portfolio.create_equity_curve_dataframe(), "\n\n")
 
-    time.sleep(1)
+    # time.sleep(5)
+
+print(portfolio.create_equity_curve_dataframe(), "\n\n")
+ss = portfolio.output_summary_stats()
+print(ss)

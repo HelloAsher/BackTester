@@ -28,3 +28,12 @@ print(ssss)
 print(MarketEvent().type_enum)
 print(SignalEvent("sdf", "dafs", "fdsa", 12).type_enum)
 print("sadfas", MarketEvent().type_enum == SignalEvent("sdf", "dafs", "fdsa", 12).type_enum)
+
+
+import tushare as ts
+
+
+sadfasd = ts.get_k_data("600348", start="2017-09-01 09:30:00", end="2017-09-06 15:00:00", ktype="60")
+# sadfasd = ts.get_k_data("600724", "2017-09-05", "2017-09-07", ktype="60")
+# sadfasd = ts.get_k_data("600724")
+print(sadfasd)

@@ -54,7 +54,7 @@ class BuyAndHoldStrategy(Strategy):
         :param event:   MarketEvent
         :return:
         """
-        if event.typename == EventType.MARKET:
+        if event.type_enum == EventType.MARKET:
             for s in self.symbol_list:
                 bar = self.data_handler.get_latest_bars(s)
                 if bar is not None and bar != []:

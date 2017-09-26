@@ -88,13 +88,13 @@ class Portfolio(metaclass=ABCMeta):
         pass
 
     def update_from_fill(self, event: FillEvent):
-        if event.typename == EventType.FILL:
+        if event.type_enum == EventType.FILL:
             self.update_positions_from_fill(event)
             self.update_holdings_from_fill(event)
         pass
 
     def update_from_signal(self, event: SignalEvent):
-        if event.typename == EventType.SIGNAL:
+        if event.type_enum == EventType.SIGNAL:
             order = self.generate_order(event)
             self.events.put(order)
         pass
@@ -109,30 +109,31 @@ class Portfolio(metaclass=ABCMeta):
         2、将1中每次变化后的内容追加到all_positions和all_holdings这两个list中，形成了两个根据时间变化的list
         :return:
         """
-        latest_bar_of_every_symbol = {}
-        for symbol in self.symbol_list:
-            latest_bar_of_every_symbol[symbol] = self.data_handler.get_latest_bars(symbol, n=1)
+        if self.data_handler.continue_backtest:  # 由于外层的loop机制，如果这里不判断的话会导致最后all_holding的最后一条记录重复
+            latest_bar_of_every_symbol = {}
+            for symbol in self.symbol_list:
+                latest_bar_of_every_symbol[symbol] = self.data_handler.get_latest_bars(symbol, n=1)
 
-        # 1、更新positions
-        dic_position_new = {symbol: 0 for symbol in self.symbol_list}
-        dic_position_new["datetime"] = latest_bar_of_every_symbol[self.symbol_list[0]][0][1]
-        for s in self.symbol_list:
-            dic_position_new[s] = self.current_positions[s]
-        # 把current_positions更新到all_positions中
-        self.all_positions.append(dic_position_new)
+            # 1、更新positions
+            dic_position_new = {symbol: 0 for symbol in self.symbol_list}
+            dic_position_new["datetime"] = latest_bar_of_every_symbol[self.symbol_list[0]][0][1]
+            for s in self.symbol_list:
+                dic_position_new[s] = self.current_positions[s]
+            # 把current_positions更新到all_positions中
+            self.all_positions.append(dic_position_new)
 
-        # 2、更新holdings
-        dic_holding_new = {symbol: 0.0 for symbol in self.symbol_list}
-        dic_holding_new["datetime"] = latest_bar_of_every_symbol[self.symbol_list[0]][0][1]
-        dic_holding_new["cash"] = self.current_holdings["cash"]
-        dic_holding_new["commission"] = self.current_holdings["commission"]
-        dic_holding_new["total"] = self.current_holdings["cash"]
-        for s in self.symbol_list:
-            market_value = self.current_positions[s] * latest_bar_of_every_symbol[s][0][5]
-            dic_holding_new[s] = market_value
-            dic_holding_new["total"] += market_value
-        # 把current_holdings更新到all_holdings中
-        self.all_holdings.append(dic_holding_new)
+            # 2、更新holdings
+            dic_holding_new = {symbol: 0.0 for symbol in self.symbol_list}
+            dic_holding_new["datetime"] = latest_bar_of_every_symbol[self.symbol_list[0]][0][1]
+            dic_holding_new["cash"] = self.current_holdings["cash"]
+            dic_holding_new["commission"] = self.current_holdings["commission"]
+            dic_holding_new["total"] = self.current_holdings["cash"]
+            for s in self.symbol_list:
+                market_value = self.current_positions[s] * latest_bar_of_every_symbol[s][0][5]
+                dic_holding_new[s] = market_value
+                dic_holding_new["total"] += market_value
+            # 把current_holdings更新到all_holdings中
+            self.all_holdings.append(dic_holding_new)
 
     def create_equity_curve_dataframe(self) -> pd.DataFrame:
         """
@@ -151,7 +152,7 @@ class Portfolio(metaclass=ABCMeta):
         :return: 一个包含了统计信息的list
         """
         equity_curve = self.create_equity_curve_dataframe()
-        total_return_and_capital = equity_curve["equity_curve"][-1]
+        total_return_and_capital = equity_curve["equity_curve"].values[-1]
         returns = equity_curve["returns"]
         pnl = equity_curve["equity_curve"]
 
@@ -160,7 +161,7 @@ class Portfolio(metaclass=ABCMeta):
 
         stats = {"total return": "%0.2f%%" % ((total_return_and_capital - 1) * 100),
                  "sharp ratio": "%0.2f" % sharp_ratio, "max drawdown": '%0.2f%%' % (max_drawdown * 100.0),
-                 "drawdown duration": "%d" % duration}
+                 "drawdown duration": "%d" % int(duration)}
         return stats
 
 

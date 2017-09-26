@@ -11,6 +11,7 @@ class DataHandler(metaclass=ABCMeta):
     它将在每个heart beat从数据源获取一条数据，并且产生一个MarketEvent
     bars的格式是：Open-Low-High-Close-Volume-OpenInterest
     """
+
     def __init__(self, events: queue.Queue, symbol_list, start_datetime, end_datetime):
         self.events = events
         self.symbol_list = symbol_list
@@ -76,9 +77,9 @@ class TushareDataHandler(DataHandler):
     def get_data_from_tushare(self):
         comb_index = None
         for s in self.symbol_list:
-            self.symbol_data[s] = ts.get_hist_data(s, start=self.start_datetime,
-                                                   end=self.end_datetime, ktype="15")
-            self.symbol_data[s].sort_index(inplace=True)
+            self.symbol_data[s] = ts.get_k_data(s, start=self.start_datetime,
+                                                end=self.end_datetime, ktype="60")
+            self.symbol_data[s].index = self.symbol_data[s]["date"].tolist()
             if comb_index is None:
                 comb_index = self.symbol_data[s].index
             else:
@@ -86,5 +87,3 @@ class TushareDataHandler(DataHandler):
             self.latest_symbol_data[s] = []
         for s in self.symbol_list:
             self.symbol_data[s] = self.symbol_data[s].reindex(index=comb_index, method="pad").iterrows()
-
-
