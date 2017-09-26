@@ -78,7 +78,7 @@ class TushareDataHandler(DataHandler):
         comb_index = None
         for s in self.symbol_list:
             self.symbol_data[s] = ts.get_k_data(s, start=self.start_datetime,
-                                                end=self.end_datetime, ktype="60")
+                                                end=self.end_datetime, ktype="15")
             self.symbol_data[s].index = self.symbol_data[s]["date"].tolist()
             if comb_index is None:
                 comb_index = self.symbol_data[s].index

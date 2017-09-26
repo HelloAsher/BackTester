@@ -9,8 +9,8 @@ import time
 
 events = queue.Queue()
 symbol_list = ["600345", "600348"]
-start_datetime = "2017-09-05 09:30:00"
-end_datetime = "2017-09-05 15:00:00"
+start_datetime = "2017-09-05 09:30"
+end_datetime = "2017-09-05 15:00"
 data_handler = TushareDataHandler(events, symbol_list, start_datetime, end_datetime)
 strategy = BuyAndHoldStrategy(data_handler, events)
 portfolio = NaivePortfolio(data_handler, events, start_datetime)
@@ -45,10 +45,12 @@ while True:
                 elif event.type_enum == EventType.FILL:
                     portfolio.update_from_fill(event)
 
-    print("current_holdings: ", portfolio.current_holdings)
-    print("current_positions: ", portfolio.current_positions)
 
     # time.sleep(5)
+
+print("current_holdings: ", portfolio.all_holdings[0])
+print("current_holdings: ", portfolio.all_holdings[1])
+print("current_holdings: ", portfolio.all_holdings[2])
 
 print(portfolio.create_equity_curve_dataframe())
 ss = portfolio.output_summary_stats()
