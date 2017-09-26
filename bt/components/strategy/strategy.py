@@ -1,5 +1,7 @@
 from abc import ABCMeta, abstractmethod
-from bt.components.event.event import SignalEvent
+import queue
+
+from bt.components.event.event import SignalEvent, MarketEvent
 from bt.components.data_handler.data import DataHandler
 
 
@@ -11,7 +13,7 @@ class Strategy(metaclass=ABCMeta):
     4、strategy类接受MarketEvent，然后生成SignalEvent
     """
 
-    def __init__(self, data_handler: DataHandler, events):
+    def __init__(self, data_handler: DataHandler, events: queue.Queue):
         """
         用来初始化BuyAndHoldStrategy这个类的
         :param data_handler:    DataHandler类的实例
@@ -24,7 +26,7 @@ class Strategy(metaclass=ABCMeta):
         self.bought = {symbol: False for symbol in self.symbol_list}
 
     @abstractmethod
-    def calculate_signals(self, event):
+    def calculate_signals(self, event: MarketEvent):
         """
         提供计算signal的原型，其计算结果就是生成一个个的OrderEvent
         :return:
@@ -38,7 +40,7 @@ class BuyAndHoldStrategy(Strategy):
     2、作用是：这个策略所持有的股票可以作为benchmark，用来跟其他策略做比较
     """
 
-    def __init__(self, data_handler: DataHandler, events):
+    def __init__(self, data_handler: DataHandler, events: queue.Queue):
         """
         用来初始化BuyAndHoldStrategy这个类的
         :param data_handler:    DataHandler类的实例
@@ -46,7 +48,7 @@ class BuyAndHoldStrategy(Strategy):
         """
         super(BuyAndHoldStrategy, self).__init__(data_handler, events)
 
-    def calculate_signals(self, event):
+    def calculate_signals(self, event: MarketEvent):
         """
         在BuyAndHoldStrategy中，为每一个symbol产生一个买signal，这意味着我们长久持有symbol_list中的股票
         :param event:   MarketEvent

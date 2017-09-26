@@ -1,5 +1,6 @@
 import tushare as ts
 from abc import ABCMeta, abstractmethod
+import queue
 
 from bt.components.event.event import MarketEvent
 
@@ -10,7 +11,7 @@ class DataHandler(metaclass=ABCMeta):
     它将在每个heart beat从数据源获取一条数据，并且产生一个MarketEvent
     bars的格式是：Open-Low-High-Close-Volume-OpenInterest
     """
-    def __init__(self, events, symbol_list, start_datetime, end_datetime):
+    def __init__(self, events: queue.Queue, symbol_list, start_datetime, end_datetime):
         self.events = events
         self.symbol_list = symbol_list
         self.start_datetime = start_datetime
@@ -35,7 +36,7 @@ class DataHandler(metaclass=ABCMeta):
             yield tuple([symbol, index, row["open"], row["low"],
                          row["high"], row["close"], row["volume"]])
 
-    def get_latest_bars(self, symbol, n=1):
+    def get_latest_bars(self, symbol, n=1) -> list:
         """
         这个方法将会从latest_symbol list中返回最新的n个bars
         :param symbol:  交易品种的代码
@@ -66,7 +67,7 @@ class DataHandler(metaclass=ABCMeta):
 
 
 class TushareDataHandler(DataHandler):
-    def __init__(self, events, symbol_list, start_datetime, end_datetime):
+    def __init__(self, events: queue.Queue, symbol_list, start_datetime, end_datetime):
         super(TushareDataHandler, self).__init__(events, symbol_list, start_datetime, end_datetime)
 
     def get_data_from_external(self):

@@ -48,4 +48,4 @@ while True:
     print("current_positions: ", portfolio.current_positions)
     print(portfolio.create_equity_curve_dataframe(), "\n\n")
 
-    time.sleep(5)
+    time.sleep(1)

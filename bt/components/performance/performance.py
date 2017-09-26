@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 
-def create_sharp_ratio(returns: pd.Series, periods=250 * 4 * 15):
+def create_sharp_ratio(returns: pd.Series, periods=250 * 4 * 15) -> float:
     """
     为这个投资组合计算夏普比率，假设无风险收益率为0
     :param returns: 投资组合的 每一期的收益率，是一个pandas series
@@ -12,7 +12,7 @@ def create_sharp_ratio(returns: pd.Series, periods=250 * 4 * 15):
     return (np.sqrt(periods) * np.mean(returns)) / np.std(returns)
 
 
-def create_drawdowns(equity_curve: pd.Series):
+def create_drawdowns(equity_curve: pd.Series) -> (float, int):
     """
     计算股票或者投资组合的最大回撤
     :param equity_curve:    每期的收益率百分比，是一个pandas series

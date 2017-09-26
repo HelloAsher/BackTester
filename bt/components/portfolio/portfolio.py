@@ -14,7 +14,7 @@ class Portfolio(metaclass=ABCMeta):
     这个类处理所有股票的持仓，处理的形式是秒级，分钟级，5分钟级，30分钟级。。。。。
     """
 
-    def __init__(self, data_handler: DataHandler, events, start_datetime, initial_capital):
+    def __init__(self, data_handler: DataHandler, events: Queue, start_datetime, initial_capital):
         """
         通过DataHandler（bars）和一个event queue来初始化一个NavePortfolio，还有一个开始日期
         :param data_handler:    DataHandler
@@ -169,7 +169,7 @@ class NaivePortfolio(Portfolio):
     目的是用来测试一些简单的策略，比如BuyAndHoldStrategy这样的
     """
 
-    def __init__(self, data_handler: DataHandler, events, start_datetime, initial_capital=100000.0):
+    def __init__(self, data_handler: DataHandler, events: Queue, start_datetime, initial_capital=100000.0):
         """
         通过DataHandler（bars）和一个event queue来初始化一个NavePortfolio，还有一个开始日期
         :param data_handler:    DataHandler
