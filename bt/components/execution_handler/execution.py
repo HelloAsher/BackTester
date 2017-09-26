@@ -34,7 +34,7 @@ class SimulatedExecutionHandler(ExecutionHandler):
         super(SimulatedExecutionHandler, self).__init__(events)
 
     def execute_order(self, event: OrderEvent):
-        if event.type == EventType.ORDER:
+        if event.typename == EventType.ORDER:
             fill_event = FillEvent(datetime.datetime.utcnow(), event.symbol, "SH", event.quantity, event.direction,
                                    None)
             self.events.put(fill_event)

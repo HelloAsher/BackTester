@@ -88,13 +88,13 @@ class Portfolio(metaclass=ABCMeta):
         pass
 
     def update_from_fill(self, event: FillEvent):
-        if event.type == EventType.FILL:
+        if event.typename == EventType.FILL:
             self.update_positions_from_fill(event)
             self.update_holdings_from_fill(event)
         pass
 
     def update_from_signal(self, event: SignalEvent):
-        if event.type == EventType.SIGNAL:
+        if event.typename == EventType.SIGNAL:
             order = self.generate_order(event)
             self.events.put(order)
         pass
