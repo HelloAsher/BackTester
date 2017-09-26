@@ -8,8 +8,8 @@ import time
 
 events = queue.Queue()
 symbol_list = ["600724", "600345", "600348"]
-start_datetime = "2017-09-05 00:00:00"
-end_datetime = "2017-09-09 00:00:00"
+start_datetime = "2017-09-05 09:30:00"
+end_datetime = "2017-09-09 15:00:00"
 data_handler = TushareDataHandler(events, symbol_list, start_datetime, end_datetime)
 strategy = BuyAndHoldStrategy(data_handler, events)
 portfolio = NaivePortfolio(data_handler, events, start_datetime)

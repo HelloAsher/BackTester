@@ -105,7 +105,8 @@ class Portfolio(metaclass=ABCMeta):
 
     def update_timeindex(self):
         """
-        将current_positions和current_holdings的内容追加到all_positions和all_holdings这两个list中
+        1、每次价格变化都会导致持仓资金量的变化，进而导致收益率的变化
+        2、将1中每次变化后的内容追加到all_positions和all_holdings这两个list中，形成了两个根据时间变化的list
         :return:
         """
         latest_bar_of_every_symbol = {}
