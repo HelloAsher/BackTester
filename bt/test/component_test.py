@@ -1,5 +1,5 @@
 from queue import Queue
-from bt.components.event.event import MarketEvent
+from bt.components.event.event import MarketEvent, SignalEvent
 
 nn = Queue()
 nn.put("sdfsadf1")
@@ -25,4 +25,6 @@ ssss = ddd.cumprod()
 print(ssss)
 
 
-print(MarketEvent().type)
+print(MarketEvent().type_enum)
+print(SignalEvent("sdf", "dafs", "fdsa", 12).type_enum)
+print("sadfas", MarketEvent().type_enum == SignalEvent("sdf", "dafs", "fdsa", 12).type_enum)

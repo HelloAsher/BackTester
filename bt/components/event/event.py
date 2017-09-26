@@ -15,8 +15,8 @@ class Event(object):
     """
 
     @property
-    def typename(self):
-        return self.type
+    def type_enum(self):
+        return self._type
     pass
 
 
@@ -26,7 +26,7 @@ class MarketEvent(Event):
     """
 
     def __init__(self):
-        self.type = EventType.MARKET
+        self._type = EventType.MARKET
 
 
 class SignalEvent(Event):
@@ -42,7 +42,7 @@ class SignalEvent(Event):
         :param signal_type: 这个参数的可选有"SHORT"和"LONG"和"EXIT"
         :param strength: 对持仓数量的控制，感觉有点像“手”的意思
         """
-        self.type = EventType.SIGNAL
+        self._type = EventType.SIGNAL
         self.symbol = symbol
         self.datetime = datetime
         self.signal_type = signal_type
@@ -62,7 +62,7 @@ class OrderEvent(Event):
         :param direction:   交易的方向，可选的有"BUY"和"SELL"
         :param order_type:  订单的类型，可选的有："MKT"，表示Market；"LMT"：表示Limit
         """
-        self.type = EventType.ORDER
+        self._type = EventType.ORDER
         self.symbol = symbol
         self.quantity = quantity
         self.direction = direction
@@ -89,7 +89,7 @@ class FillEvent(Event):
         :param fill_cost:   交易后的持仓
         :param commission:  An optional commission sent from IB.
         """
-        self.type = EventType.FILL
+        self._type = EventType.FILL
         self.time_index = time_index
         self.symbol = symbol
         self.exchange = exchange
