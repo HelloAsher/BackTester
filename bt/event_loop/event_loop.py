@@ -50,6 +50,6 @@ while True:
 
     # time.sleep(5)
 
-print(portfolio.create_equity_curve_dataframe(), "\n\n")
+print(portfolio.create_equity_curve_dataframe())
 ss = portfolio.output_summary_stats()
 print(ss)
