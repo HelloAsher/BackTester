@@ -1,6 +1,7 @@
 import tushare as ts
 from abc import ABCMeta, abstractmethod
 import queue
+import pandas as pd
 
 from bt.components.event.event import MarketEvent
 
@@ -35,7 +36,7 @@ class DataHandler(metaclass=ABCMeta):
         """
         for (index, row) in self.symbol_data[symbol]:
             yield tuple([symbol, index, row["open"], row["low"],
-                         row["high"], row["close"], row["volume"]])
+                         row["high"], row["close"], row["vol"]])
 
     def get_latest_bars(self, symbol, n=1) -> list:
         """
@@ -77,9 +78,9 @@ class TushareDataHandler(DataHandler):
     def get_data_from_tushare(self):
         comb_index = None
         for s in self.symbol_list:
-            self.symbol_data[s] = ts.get_k_data(s, start=self.start_datetime,
-                                                end=self.end_datetime, ktype="15")
-            self.symbol_data[s].index = self.symbol_data[s]["date"].tolist()
+            self.symbol_data[s] = ts.bar(s, start_date=self.start_datetime,
+                                         end_date=self.end_datetime, ktype="15min")
+            self.symbol_data[s].sort_index(inplace=True)
             if comb_index is None:
                 comb_index = self.symbol_data[s].index
             else:
